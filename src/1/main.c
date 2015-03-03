@@ -34,6 +34,7 @@ void banner()
  
 void _1entry()
 {
+	idt_install();
 	init_video();
 
 	banner();
@@ -44,6 +45,7 @@ void _1entry()
 		puts("Don't support CPUID.\n");
 	}
 
-	for (;;) {}
+	asm volatile ("int $0x3");
+	asm volatile ("int $0x4");
 }
 

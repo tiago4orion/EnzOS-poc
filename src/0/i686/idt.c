@@ -27,16 +27,24 @@ struct idt_ptr idtp;
 
 /* This exists in 'idt.s', and is used to load our IDT */
 extern void idt_load();
+extern void isr0();
+extern void isr1();
+extern void isr2();
+extern void isr32();
 
 /* Use this function to set an entry in the IDT. Alot simpler
 *  than twiddling with the GDT ;) */
 void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags)
 {
-    /* We'll leave you to try and code this function: take the
-    *  argument 'base' and split it up into a high and low 16-bits,
-    *  storing them in idt[num].base_hi and base_lo. The rest of the
-    *  fields that you must set in idt[num] are fairly self-
-    *  explanatory when it comes to setup */
+	idt[num].base_lo = base & 0xFFFF;
+	idt[num].base_hi = (base >> 16) & 0xFFFF;
+
+	idt[num].sel     = sel;
+	idt[num].always0 = 0;
+
+	// We must uncomment the OR below when we get to using user-mode.
+	// It sets the interrupt gate's privilege level to 3.
+	idt[num].flags   = flags /* | 0x60 */;
 }
 
 /* Installs the IDT */
@@ -49,7 +57,10 @@ void idt_install()
     /* Clear out the entire IDT, initializing it to zeros */
     memset((unsigned char *)&idt, 0, sizeof(struct idt_entry) * 256);
 
-    /* Add any new ISRs to the IDT here using idt_set_gate */
+    idt_set_gate(0, (unsigned int)isr0 , 0x08, 0x8E);
+    idt_set_gate(1, (unsigned int)isr1 , 0x08, 0x8E);
+    
+    idt_set_gate(31, (unsigned int)isr32, 0x08, 0x8E);
 
     /* Points the processor's internal register to the new IDT */
     idt_load();
