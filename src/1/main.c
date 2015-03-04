@@ -6,7 +6,7 @@
  *     - Detect the hardware (cpuid)
  */
 #include <enzos/system.h>
- 
+
 /**
  * inportb can be used to read data from I/O ports, such as the keyboard.
  */

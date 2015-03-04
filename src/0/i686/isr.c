@@ -3,7 +3,16 @@
 // This gets called from our ASM interrupt handler stub.
 void isr_handler(registers_t regs)
 {
-   puts("recieved interrupt: ");
-   putch(regs.int_no);
-   puts("\n");
+	puts("recieved interrupt: ");
+	char regbuf[10];
+	memset(regbuf, 0, 10);
+	itoa(regs.int_no, regbuf);
+	puts(regbuf);
+
+	puts("\n");
+
+	puts("error received: ");
+	itoa(regs.err_code, regbuf);
+	puts(regbuf);
+	puts("\n");
 }

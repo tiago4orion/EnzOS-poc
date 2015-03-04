@@ -2,7 +2,10 @@
 
 	section .text
 	global idt_load
-	extern idtp
 idt_load:
-	lidt [idtp]
+	push ebp
+	mov ebp, esp
+	mov eax, [esp+8]
+	lidt [eax]
+	leave
 	ret

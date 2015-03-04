@@ -26,7 +26,7 @@ struct idt_entry idt[256];
 struct idt_ptr idtp;
 
 /* This exists in 'idt.s', and is used to load our IDT */
-extern void idt_load();
+extern void idt_load(unsigned int);
 extern void isr0();
 extern void isr1();
 extern void isr2();
@@ -50,6 +50,7 @@ void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, uns
 /* Installs the IDT */
 void idt_install()
 {
+	int i = 0;
     /* Sets the special IDT pointer up, just like in 'gdt.c' */
     idtp.limit = (sizeof (struct idt_entry) * 256) - 1;
     idtp.base = (unsigned int)&idt;
@@ -59,9 +60,12 @@ void idt_install()
 
     idt_set_gate(0, (unsigned int)isr0 , 0x08, 0x8E);
     idt_set_gate(1, (unsigned int)isr1 , 0x08, 0x8E);
-    
-    idt_set_gate(31, (unsigned int)isr32, 0x08, 0x8E);
+    idt_set_gate(2, (unsigned int)isr2 , 0x08, 0x8E);
+
+    for (i = 3; i < 32; i++) {
+	    idt_set_gate(i, (unsigned int)isr0 , 0x08, 0x8E);
+    }
 
     /* Points the processor's internal register to the new IDT */
-    idt_load();
+    idt_load((unsigned int)&idtp);
 }

@@ -55,9 +55,6 @@ start:
 	extern gdt_install
 	call gdt_install
 
-	;; 	extern idt_install
-	;; 	call idt_install
-
 	;; WTF is _1entry ? Every level has a entrypoint function. A function
 	;; that starts the new floor, _1entry initialize the level 1 and
 	;; _2entry initialize the 2nd floor and so on.
@@ -70,3 +67,4 @@ start:
 .hang:
 	hlt
 	jmp .hang
+
